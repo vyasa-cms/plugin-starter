@@ -1,0 +1,36 @@
+name: Check
+
+# Builds the component and packs it with the real vyasa binary (a
+# throwaway key), so a plugin that passes here installs on every Vyasa.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.99
+        with:
+          targets: wasm32-wasip2
+      - uses: Swatinem/rust-cache@v2
+      - name: Fetch the vyasa binary
+        run: |
+          gh release download -R vyasa-cms/vyasa --pattern 'vyasa-*-x86_64-unknown-linux-gnu.tar.gz' -O vyasa.tar.gz
+          mkdir -p .vyasa && tar -xzf vyasa.tar.gz --strip-components=1 -C .vyasa
+          echo "$PWD/.vyasa" >> "$GITHUB_PATH"
+        env:
+          GH_TOKEN: ${{ secrets.VYASA_READ_TOKEN || github.token }}
+      - name: Build and pack with a throwaway key
+        run: |
+          export VYASA_SIGNING_KEY=$(vyasa plugin keygen | sed -n '2p' | tr -d ' ')
+          scripts/build.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: plugin
+          path: dist/*.vyplugin

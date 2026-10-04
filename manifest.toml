@@ -1,0 +1,5 @@
+name = "my-plugin"
+version = "0.1.0"
+min_host_api = 0
+description = "Says what it does, in one line, for the admin's plugin list"
+capabilities = ["log:write"]
