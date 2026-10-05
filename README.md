@@ -23,9 +23,8 @@ scripts/build.sh  # build → pack → dist/<name>-<version>.vyplugin
   (`rust-toolchain.toml` installs it: `wasm32-wasip2`).
 - A Vyasa install to test against — the
   [quick start](https://github.com/vyasa-cms/vyasa#quick-start) runs one
-  in Docker — and the `vyasa` binary from a
-  [release archive](https://github.com/vyasa-cms/vyasa/releases) on your
-  `PATH`.
+  in Docker — and the `vyasa` command on your machine, which the installer
+  puts on your `PATH`: `curl -fsSL https://vyasa.site/install.sh | sh`.
 - A signing key. Every plugin package is signed by its author:
 
   ```bash
